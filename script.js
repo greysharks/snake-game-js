@@ -13,33 +13,32 @@ class Layout {
 class Unit {
 	x = 0;
 	y = 0;
-	size = 8;
 	
-	constructor(x, y, size) {
+	constructor(x, y) {
 		this.x = x;
 		this.y = y;
-		this.size = size;
 	}
 }
 
 class Apple extends Unit {
-	static count = 1;
+	static count = 0;
+	size = 8;
 	
-	constructor(x, y, size) {
-		super(x, y, size);
-	}
-	
-	Collected() {
+	constructor(x, y) {
+		super(x, y);
+		
 		this.count += 1;
 	}
+	
 }
 
 class Snake {
-	body = [];
 	last;
+	body = [];
+	size = 16;
 	
 	constructor() {
-		this.last = new Unit(canvas.width / 2, canvas.height / 2, 16);
+		this.last = new Unit((canvas.width / 2) - (this.size / 2), (canvas.height / 2) - (this.size / 2));
 		this.body.push(this.last);
 		// console.log("snake was created");
 	}
@@ -54,6 +53,11 @@ context.fillRect(0, 0, layout.width, layout.height);
 
 const snake = new Snake();
 context.fillStyle = "black";
-context.fillRect(snake.body[0].x, snake.body[0].y, snake.body[0].size, snake.body[0].size);
-// console.log(snake.body[0].x, snake.body[0].y, snake.body[0].size);
+context.fillRect(snake.body[0].x, snake.body[0].y, snake.size, snake.size);
+// console.log(snake.body[0].x, snake.body[0].y, snake.size);
+
+let apple = new Apple((canvas.width / 2) - (8 / 2), (canvas.height / 4) - (8 / 2)); // 8 is apple.size
+context.fillStyle = "red";
+context.fillRect(apple.x, apple.y, apple.size, apple.size);
+
 
