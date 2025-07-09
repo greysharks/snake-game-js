@@ -15,14 +15,12 @@ class Movement {
 	down;
 	left;
 	right;
-	accelerate;
 	
 	constructor() {
 		this.up = "ArrowUp";
 		this.down = "ArrowDown";
 		this.left = "ArrowLeft";
 		this.right = "ArrowRight";
-		this.accelerate = "Space";
 	}
 }
 
@@ -63,22 +61,13 @@ class Snake {
 
 // adding event listeners for keyboard
 
-const activeKeys = {};
 const movement = new Movement();
 
-activeKeys[movement.up] = false;
-activeKeys[movement.down] = false;
-activeKeys[movement.left] = false;
-activeKeys[movement.right] = false;
-activeKeys[movement.accelerate] = false;
+let currentDirection = movement.up;
 
 document.addEventListener("keydown", (event) => {
-	activeKeys[event.code] = true;
+	currentDirection = event.code;
 	// console.log(event.code);
-});
-
-document.addEventListener("keyup", (event) => {
-	activeKeys[event.code] = false;
 });
 
 // setting up layout for game to play
@@ -102,12 +91,9 @@ context.fillRect(apple.x, apple.y, apple.size, apple.size);
 // actual game loop (start of the game)
 
 function GameLoop() {
-	let distance = snake.speed;
+	const distance = snake.speed;
 	
-	if (activeKeys[movement.accelerate]) {
-		distance *= 2;
-	}
-	if (activeKeys[movement.up]) {
+	if (currentDirection == movement.up) {
 		snake.last = snake.body.at(-1);
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
@@ -119,7 +105,8 @@ function GameLoop() {
 			snake.body[0].y -= distance;
 		}
 	}
-	if (activeKeys[movement.down]) {
+	
+	if (currentDirection == movement.down) {
 		snake.last = snake.body.at(-1);
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
@@ -131,7 +118,8 @@ function GameLoop() {
 			snake.body[0].y += distance;
 		}
 	}
-	if (activeKeys[movement.left]) {
+	
+	if (currentDirection == movement.left) {
 		snake.last = snake.body.at(-1);
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
@@ -143,7 +131,8 @@ function GameLoop() {
 			snake.body[0].x -= distance;
 		}
 	}
-	if (activeKeys[movement.right]) {
+	
+	if (currentDirection == movement.right) {
 		snake.last = snake.body.at(-1);
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
