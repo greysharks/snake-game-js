@@ -100,9 +100,15 @@ function GameLoop() {
 		}
 		if (snake.body.length < 2) {
 			snake.last.y -= distance;
+			if (snake.last.y <= -1 * snake.size) {
+				snake.last.y = layout.height - snake.last.y;
+			}
 		}
 		else {
 			snake.body[0].y -= distance;
+			if (snake.body[0].y <= -1 * snake.size) {
+				snake.body[0].y = layout.height - snake.body[0].y;
+			}
 		}
 	}
 	
@@ -113,9 +119,15 @@ function GameLoop() {
 		}
 		if (snake.body.length < 2) {
 			snake.last.y += distance;
+			if (snake.last.y >= layout.height) {
+				snake.last.y = snake.last.y - layout.height;
+			}
 		}
 		else {
 			snake.body[0].y += distance;
+			if (snake.body[0].y >= layout.height) {
+				snake.body[0].y = snake.body[0].y - layout.height;
+			}
 		}
 	}
 	
@@ -126,9 +138,15 @@ function GameLoop() {
 		}
 		if (snake.body.length < 2) {
 			snake.last.x -= distance;
+			if (snake.last.x <= -1 * snake.size) {
+				snake.last.x = layout.width - snake.last.x;
+			}
 		}
 		else {
 			snake.body[0].x -= distance;
+			if (snake.body[0].x <= -1 * snake.size) {
+				snake.body[0].x = layout.width - snake.body[0].x;
+			}
 		}
 	}
 	
@@ -139,9 +157,15 @@ function GameLoop() {
 		}
 		if (snake.body.length < 2) {
 			snake.last.x += distance;
+			if (snake.last.x >= layout.width) {
+				snake.last.x = snake.last.x - layout.height;
+			}
 		}
 		else {
 			snake.body[0].x += distance;
+			if (snake.body[0].x >= layout.width) {
+				snake.body[0].x = snake.body[0].x - layout.height;
+			}
 		}
 	}
 	
