@@ -1,3 +1,15 @@
+class Layout {
+	width = 100;
+	height = 100;
+	color = "white";
+	
+	constructor(width, height) {
+		this.width = width;
+		this.height = height;
+	}
+	
+}
+
 class Unit {
 	x = 0;
 	y = 0;
@@ -22,7 +34,26 @@ class Apple extends Unit {
 	}
 }
 
+class Snake {
+	body = [];
+	last;
+	
+	constructor() {
+		this.last = new Unit(canvas.width / 2, canvas.height / 2, 16);
+		this.body.push(this.last);
+		// console.log("snake was created");
+	}
+}
+
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
-context.fillStyle = "white";
-context.fillRect(0, 0, canvas.width, canvas.height);
+
+const layout = new Layout(canvas.width, canvas.height);
+context.fillStyle = layout.color;
+context.fillRect(0, 0, layout.width, layout.height);
+
+const snake = new Snake();
+context.fillStyle = "black";
+context.fillRect(snake.body[0].x, snake.body[0].y, snake.body[0].size, snake.body[0].size);
+// console.log(snake.body[0].x, snake.body[0].y, snake.body[0].size);
+
