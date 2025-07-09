@@ -36,7 +36,7 @@ class Unit {
 
 class Apple extends Unit {
 	static count = 0;
-	size = 8;
+	size = 16;
 	
 	constructor(x, y) {
 		super(x, y);
@@ -52,8 +52,8 @@ class Snake {
 	size = 16;
 	speed = 4;
 	
-	constructor() {
-		this.last = new Unit((canvas.width / 2) - (this.size / 2), (canvas.height / 2) - (this.size / 2));
+	constructor(x, y) {
+		this.last = new Unit(x, y);
 		this.body.push(this.last);
 		// console.log("snake was created");
 	}
@@ -63,7 +63,7 @@ class Snake {
 
 const movement = new Movement();
 
-let currentDirection = movement.up;
+let currentDirection = movement.right;
 
 document.addEventListener("keydown", (event) => {
 	currentDirection = event.code;
@@ -79,12 +79,12 @@ const layout = new Layout(canvas.width, canvas.height);
 context.fillStyle = layout.color;
 context.fillRect(0, 0, layout.width, layout.height);
 
-const snake = new Snake();
+const snake = new Snake(0, layout.height - 16); // 16 is the size of each part of the snake
 context.fillStyle = "black";
 context.fillRect(snake.body[0].x, snake.body[0].y, snake.size, snake.size);
 // console.log(snake.body[0].x, snake.body[0].y, snake.size);
 
-let apple = new Apple((canvas.width / 2) - (8 / 2), (canvas.height / 4) - (8 / 2)); // 8 is apple.size
+let apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
 context.fillStyle = "red";
 context.fillRect(apple.x, apple.y, apple.size, apple.size);
 
