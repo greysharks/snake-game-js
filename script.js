@@ -10,6 +10,22 @@ class Layout {
 	
 }
 
+class Movement {
+	up;
+	down;
+	left;
+	right;
+	accelerate;
+	
+	constructor() {
+		this.up = "ArrowUp";
+		this.down = "ArrowDown";
+		this.left = "ArrowLeft";
+		this.right = "ArrowRight";
+		this.accelerate = "Space";
+	}
+}
+
 class Unit {
 	x = 0;
 	y = 0;
@@ -36,6 +52,7 @@ class Snake {
 	last;
 	body = [];
 	size = 16;
+	speed = 4;
 	
 	constructor() {
 		this.last = new Unit((canvas.width / 2) - (this.size / 2), (canvas.height / 2) - (this.size / 2));
@@ -43,6 +60,28 @@ class Snake {
 		// console.log("snake was created");
 	}
 }
+
+// adding event listeners for keyboard
+
+const activeKeys = {};
+const movement = new Movement();
+
+activeKeys[movement.up] = false;
+activeKeys[movement.down] = false;
+activeKeys[movement.left] = false;
+activeKeys[movement.right] = false;
+activeKeys[movement.accelerate] = false;
+
+document.addEventListener("keydown", (event) => {
+	activeKeys[event.code] = true;
+	// console.log(event.code);
+});
+
+document.addEventListener("keyup", (event) => {
+	activeKeys[event.code] = false;
+});
+
+// setting up layout for game to play
 
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
@@ -60,4 +99,75 @@ let apple = new Apple((canvas.width / 2) - (8 / 2), (canvas.height / 4) - (8 / 2
 context.fillStyle = "red";
 context.fillRect(apple.x, apple.y, apple.size, apple.size);
 
+// actual game loop (start of the game)
 
+function GameLoop() {
+	let distance = snake.speed;
+	
+	if (activeKeys[movement.accelerate]) {
+		distance *= 2;
+	}
+	if (activeKeys[movement.up]) {
+		snake.last = snake.body.at(-1);
+		for (let i = 1; i < snake.body.length; i++) {
+			snake.body[i] = snake.body[i - 1];
+		}
+		if (snake.body.length < 2) {
+			snake.last.y -= distance;
+		}
+		else {
+			snake.body[0].y -= distance;
+		}
+	}
+	if (activeKeys[movement.down]) {
+		snake.last = snake.body.at(-1);
+		for (let i = 1; i < snake.body.length; i++) {
+			snake.body[i] = snake.body[i - 1];
+		}
+		if (snake.body.length < 2) {
+			snake.last.y += distance;
+		}
+		else {
+			snake.body[0].y += distance;
+		}
+	}
+	if (activeKeys[movement.left]) {
+		snake.last = snake.body.at(-1);
+		for (let i = 1; i < snake.body.length; i++) {
+			snake.body[i] = snake.body[i - 1];
+		}
+		if (snake.body.length < 2) {
+			snake.last.x -= distance;
+		}
+		else {
+			snake.body[0].x -= distance;
+		}
+	}
+	if (activeKeys[movement.right]) {
+		snake.last = snake.body.at(-1);
+		for (let i = 1; i < snake.body.length; i++) {
+			snake.body[i] = snake.body[i - 1];
+		}
+		if (snake.body.length < 2) {
+			snake.last.x += distance;
+		}
+		else {
+			snake.body[0].x += distance;
+		}
+	}
+	
+	context.fillStyle = layout.color;
+	context.fillRect(0, 0, layout.width, layout.height);
+	
+	context.fillStyle = "red";
+	context.fillRect(apple.x, apple.y, apple.size, apple.size);
+	
+	context.fillStyle = "black";
+	snake.body.forEach(element => {
+		context.fillRect(element.x, element.y, snake.size, snake.size);
+	});
+	
+	requestAnimationFrame(GameLoop);
+}
+
+requestAnimationFrame(GameLoop);
