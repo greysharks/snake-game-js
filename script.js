@@ -7,7 +7,6 @@ class Layout {
 		this.width = width;
 		this.height = height;
 	}
-	
 }
 
 class Movement {
@@ -59,6 +58,10 @@ class Snake {
 	}
 }
 
+function HaveCollided(a, b, sizeA, sizeB) {
+	return (a.x < b.x + sizeB) && (a.x + sizeA > b.x) && (a.y < b.y + sizeB) && (a.y + sizeA > b.y);
+}
+
 // adding event listeners for keyboard
 
 const movement = new Movement();
@@ -93,17 +96,21 @@ context.fillRect(apple.x, apple.y, apple.size, apple.size);
 function GameLoop() {
 	const distance = snake.speed;
 	
+	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
 		snake.last = snake.body.at(-1);
+		
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
 		}
+		
 		if (snake.body.length < 2) {
 			snake.last.y -= distance;
 			if (snake.last.y <= -1 * snake.size) {
 				snake.last.y = layout.height - snake.last.y;
-			}
+			}			
 		}
+		
 		else {
 			snake.body[0].y -= distance;
 			if (snake.body[0].y <= -1 * snake.size) {
@@ -114,15 +121,18 @@ function GameLoop() {
 	
 	if (currentDirection == movement.down) {
 		snake.last = snake.body.at(-1);
+		
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
 		}
+		
 		if (snake.body.length < 2) {
 			snake.last.y += distance;
 			if (snake.last.y >= layout.height) {
 				snake.last.y = snake.last.y - layout.height;
 			}
 		}
+		
 		else {
 			snake.body[0].y += distance;
 			if (snake.body[0].y >= layout.height) {
@@ -133,15 +143,18 @@ function GameLoop() {
 	
 	if (currentDirection == movement.left) {
 		snake.last = snake.body.at(-1);
+		
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
 		}
+		
 		if (snake.body.length < 2) {
 			snake.last.x -= distance;
 			if (snake.last.x <= -1 * snake.size) {
 				snake.last.x = layout.width - snake.last.x;
 			}
 		}
+		
 		else {
 			snake.body[0].x -= distance;
 			if (snake.body[0].x <= -1 * snake.size) {
@@ -152,15 +165,18 @@ function GameLoop() {
 	
 	if (currentDirection == movement.right) {
 		snake.last = snake.body.at(-1);
+		
 		for (let i = 1; i < snake.body.length; i++) {
 			snake.body[i] = snake.body[i - 1];
 		}
+		
 		if (snake.body.length < 2) {
 			snake.last.x += distance;
 			if (snake.last.x >= layout.width) {
 				snake.last.x = snake.last.x - layout.height;
 			}
 		}
+		
 		else {
 			snake.body[0].x += distance;
 			if (snake.body[0].x >= layout.width) {
@@ -169,6 +185,21 @@ function GameLoop() {
 		}
 	}
 	
+	
+	// check collisions after snake has moved
+	if (snake.body.length < 2) {
+		if (HaveCollided(snake.last, apple, snake.size, apple.size)) {
+			apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.width - apple.size)));
+		}
+	}
+	
+	else {
+		if (HaveCollided(snake.body[0], apple, snake.size, apple.size)) {
+			apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.width - apple.size)));
+		}
+	}
+	
+	// repaint the layout of the game zone 
 	context.fillStyle = layout.color;
 	context.fillRect(0, 0, layout.width, layout.height);
 	
