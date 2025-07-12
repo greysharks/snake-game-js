@@ -98,10 +98,9 @@ function GameLoop() {
 	
 	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
-		snake.last = snake.body.at(-1);
-		
 		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i] = snake.body[i - 1];
+			snake.body[i].x = snake.body[i - 1].x;
+			snake.body[i].y = snake.body[i - 1].y + snake.size;
 		}
 		
 		snake.body[0].y -= distance;
@@ -111,10 +110,9 @@ function GameLoop() {
 	}
 	
 	if (currentDirection == movement.down) {
-		snake.last = snake.body.at(-1);
-		
 		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i] = snake.body[i - 1];
+			snake.body[i].x = snake.body[i - 1].x;
+			snake.body[i].y = snake.body[i - 1].y - snake.size;
 		}
 		
 		snake.body[0].y += distance;
@@ -124,10 +122,9 @@ function GameLoop() {
 	}
 	
 	if (currentDirection == movement.left) {
-		snake.last = snake.body.at(-1);
-		
 		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i] = snake.body[i - 1];
+			snake.body[i].x = snake.body[i - 1].x + snake.size;
+			snake.body[i].y = snake.body[i - 1].y;
 		}
 		
 		snake.body[0].x -= distance;
@@ -137,10 +134,9 @@ function GameLoop() {
 	}
 	
 	if (currentDirection == movement.right) {
-		snake.last = snake.body.at(-1);
-		
 		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i] = snake.body[i - 1];
+			snake.body[i].x = snake.body[i - 1].x - snake.size;
+			snake.body[i].y = snake.body[i - 1].y;
 		}
 		
 		snake.body[0].x += distance;
@@ -154,24 +150,27 @@ function GameLoop() {
 	if (HaveCollided(snake.body[0], apple, snake.size, apple.size)) {
 		// make the snake grow
 		if (currentDirection == movement.up) {
-			snake.body.last = new Unit(snake.last.x, snake.last.y + snake.size + 1);
-			snake.body.push(snake.body.last);
+			snake.body.push(new Unit(snake.last.x, snake.last.y + snake.size));
+			snake.last = snake.body.at(-1);
 		}
+		
 		if (currentDirection == movement.down) {
-			snake.body.last = new Unit(snake.last.x, snake.last.y - snake.size + 1);
-			snake.body.push(snake.body.last);
+			snake.body.push(new Unit(snake.last.x, snake.last.y - snake.size));
+			snake.last = snake.body.at(-1);
 		}
+		
 		if (currentDirection == movement.left) {
-			snake.body.last = new Unit(snake.last.x + snake.size + 1, snake.last.y);
-			snake.body.push(snake.body.last);
+			snake.body.push(new Unit(snake.last.x + snake.size, snake.last.y));
+			snake.last = snake.body.at(-1);
 		}
+		
 		if (currentDirection == movement.right) {
-			snake.body.last = new Unit(snake.last.x - snake.size + 1, snake.last.y);
-			snake.body.push(snake.body.last);
+			snake.body.push(new Unit(snake.last.x - snake.size, snake.last.y));
+			snake.last = snake.body.at(-1);
 		}
 			
 		//create new apple
-		apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.width - apple.size)));
+		apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.height - apple.size)));
 		// console.log(snake.body);
 	}
 		
