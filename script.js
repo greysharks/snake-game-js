@@ -104,18 +104,9 @@ function GameLoop() {
 			snake.body[i] = snake.body[i - 1];
 		}
 		
-		if (snake.body.length < 2) {
-			snake.last.y -= distance;
-			if (snake.last.y <= -1 * snake.size) {
-				snake.last.y = layout.height - snake.last.y;
-			}			
-		}
-		
-		else {
-			snake.body[0].y -= distance;
-			if (snake.body[0].y <= -1 * snake.size) {
-				snake.body[0].y = layout.height - snake.body[0].y;
-			}
+		snake.body[0].y -= distance;
+		if (snake.body[0].y <= -1 * snake.size) {
+			snake.body[0].y = layout.height - snake.body[0].y;
 		}
 	}
 	
@@ -126,18 +117,9 @@ function GameLoop() {
 			snake.body[i] = snake.body[i - 1];
 		}
 		
-		if (snake.body.length < 2) {
-			snake.last.y += distance;
-			if (snake.last.y >= layout.height) {
-				snake.last.y = snake.last.y - layout.height;
-			}
-		}
-		
-		else {
-			snake.body[0].y += distance;
-			if (snake.body[0].y >= layout.height) {
-				snake.body[0].y = snake.body[0].y - layout.height;
-			}
+		snake.body[0].y += distance;
+		if (snake.body[0].y >= layout.height) {
+			snake.body[0].y = snake.body[0].y - layout.height;
 		}
 	}
 	
@@ -148,18 +130,9 @@ function GameLoop() {
 			snake.body[i] = snake.body[i - 1];
 		}
 		
-		if (snake.body.length < 2) {
-			snake.last.x -= distance;
-			if (snake.last.x <= -1 * snake.size) {
-				snake.last.x = layout.width - snake.last.x;
-			}
-		}
-		
-		else {
-			snake.body[0].x -= distance;
-			if (snake.body[0].x <= -1 * snake.size) {
-				snake.body[0].x = layout.width - snake.body[0].x;
-			}
+		snake.body[0].x -= distance;
+		if (snake.body[0].x <= -1 * snake.size) {
+			snake.body[0].x = layout.width - snake.body[0].x;
 		}
 	}
 	
@@ -170,32 +143,44 @@ function GameLoop() {
 			snake.body[i] = snake.body[i - 1];
 		}
 		
-		if (snake.body.length < 2) {
-			snake.last.x += distance;
-			if (snake.last.x >= layout.width) {
-				snake.last.x = snake.last.x - layout.height;
-			}
+		snake.body[0].x += distance;
+		if (snake.body[0].x >= layout.width) {
+			snake.body[0].x = snake.body[0].x - layout.height;
 		}
+	}
+	
+	
+	// check for collisions after the snake has moved
+	if (HaveCollided(snake.body[0], apple, snake.size, apple.size)) {
+		// make the snake grow
+		if (currentDirection == movement.up) {
+			snake.body.last = new Unit(snake.last.x, snake.last.y + snake.size + 1);
+			snake.body.push(snake.body.last);
+		}
+		if (currentDirection == movement.down) {
+			snake.body.last = new Unit(snake.last.x, snake.last.y - snake.size + 1);
+			snake.body.push(snake.body.last);
+		}
+		if (currentDirection == movement.left) {
+			snake.body.last = new Unit(snake.last.x + snake.size + 1, snake.last.y);
+			snake.body.push(snake.body.last);
+		}
+		if (currentDirection == movement.right) {
+			snake.body.last = new Unit(snake.last.x - snake.size + 1, snake.last.y);
+			snake.body.push(snake.body.last);
+		}
+			
+		//create new apple
+		apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.width - apple.size)));
+		// console.log(snake.body);
+	}
 		
-		else {
-			snake.body[0].x += distance;
-			if (snake.body[0].x >= layout.width) {
-				snake.body[0].x = snake.body[0].x - layout.height;
-			}
-		}
-	}
-	
-	
-	// check collisions after snake has moved
-	if (snake.body.length < 2) {
-		if (HaveCollided(snake.last, apple, snake.size, apple.size)) {
-			apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.width - apple.size)));
-		}
-	}
-	
-	else {
-		if (HaveCollided(snake.body[0], apple, snake.size, apple.size)) {
-			apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.width - apple.size)));
+	for (let i = 1; i < snake.body.length; i++) {
+		if (HaveCollided(snake.body[0], snake.body[i], snake.size, snake.size)) {
+			console.log(snake.body);
+			// display here a message about results of the game
+				
+			return; // game over
 		}
 	}
 	
