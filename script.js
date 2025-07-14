@@ -92,59 +92,51 @@ context.fillStyle = "red";
 context.fillRect(apple.x, apple.y, apple.size, apple.size);
 
 // actual game loop (start of the game)
+const shift = new Unit(0, 0);
 
 function GameLoop() {
-	const distance = snake.speed;
+	shift.x = 0;
+	shift.y = 0;
 	
 	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
-		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i].x = snake.body[i - 1].x;
-			snake.body[i].y = snake.body[i - 1].y + snake.size;
-		}
-		
-		snake.body[0].y -= distance;
-		if (snake.body[0].y <= -1 * snake.size) {
-			snake.body[0].y = layout.height - snake.body[0].y;
-		}
+		// figure out what coordinate should be changed in snake's head
+		shift.y = -snake.size;
 	}
 	
-	if (currentDirection == movement.down) {
-		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i].x = snake.body[i - 1].x;
-			snake.body[i].y = snake.body[i - 1].y - snake.size;
-		}
-		
-		snake.body[0].y += distance;
-		if (snake.body[0].y >= layout.height) {
-			snake.body[0].y = snake.body[0].y - layout.height;
-		}
+	if (currentDirection == movement.down) {	
+		shift.y = snake.size;
 	}
 	
 	if (currentDirection == movement.left) {
-		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i].x = snake.body[i - 1].x + snake.size;
-			snake.body[i].y = snake.body[i - 1].y;
-		}
-		
-		snake.body[0].x -= distance;
-		if (snake.body[0].x <= -1 * snake.size) {
-			snake.body[0].x = layout.width - snake.body[0].x;
-		}
+		shift.x = -snake.size;
 	}
 	
 	if (currentDirection == movement.right) {
-		for (let i = 1; i < snake.body.length; i++) {
-			snake.body[i].x = snake.body[i - 1].x - snake.size;
-			snake.body[i].y = snake.body[i - 1].y;
-		}
-		
-		snake.body[0].x += distance;
-		if (snake.body[0].x >= layout.width) {
-			snake.body[0].x = snake.body[0].x - layout.height;
-		}
+		shift.x = snake.size;
 	}
 	
+	// move the head of the snake
+	snake.body[0].x += shift.x;
+	snake.body[0].y += shift.y;
+	
+	// check if any part of snake's body passed through walls
+	for (let i = 0; i < snake.body.length; i++) {
+		if (snake.body[i].y <= -1 * snake.size) {
+			// if so, move it to the opposite side of game zone
+			// leaving the direction of movement
+			snake.body[i].y = layout.height - snake.body[i].y;
+		}
+		if (snake.body[i].y >= layout.height) {
+			snake.body[i].y = snake.body[i].y - layout.height;
+		}
+		if (snake.body[i].x <= -1 * snake.size) {
+			snake.body[i].x = layout.width - snake.body[i].x;
+		}
+		if (snake.body[i].x >= layout.width) {
+			snake.body[i].x = snake.body[i].x - layout.height;
+		}
+	}
 	
 	// check for collisions after the snake has moved
 	if (HaveCollided(snake.body[0], apple, snake.size, apple.size)) {
