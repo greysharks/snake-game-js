@@ -36,6 +36,7 @@ class Unit {
 class Apple extends Unit {
 	static count = 0;
 	size = 16;
+	color = "red";
 	
 	constructor(x, y) {
 		super(x, y);
@@ -50,6 +51,7 @@ class Snake {
 	body = [];
 	size = 16;
 	speed = 4;
+	color = "black";
 	
 	constructor(x, y) {
 		this.last = new Unit(x, y);
@@ -83,12 +85,14 @@ context.fillStyle = layout.color;
 context.fillRect(0, 0, layout.width, layout.height);
 
 const snake = new Snake(0, layout.height - 16); // 16 is the size of each part of the snake
-context.fillStyle = "black";
+context.fillStyle = snake.color;
 context.fillRect(snake.body[0].x, snake.body[0].y, snake.size, snake.size);
 // console.log(snake.body[0].x, snake.body[0].y, snake.size);
 
+
+
 let apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
-context.fillStyle = "red";
+context.fillStyle = apple.color;
 context.fillRect(apple.x, apple.y, apple.size, apple.size);
 
 // actual game loop (start of the game)
@@ -101,19 +105,19 @@ function GameLoop() {
 	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
 		// figure out what coordinate should be changed in snake's head
-		shift.y = -snake.size;
+		shift.y = -snake.speed;
 	}
 	
 	if (currentDirection == movement.down) {	
-		shift.y = snake.size;
+		shift.y = snake.speed;
 	}
 	
 	if (currentDirection == movement.left) {
-		shift.x = -snake.size;
+		shift.x = -snake.speed;
 	}
 	
 	if (currentDirection == movement.right) {
-		shift.x = snake.size;
+		shift.x = snake.speed;
 	}
 	
 	// move the head of the snake
@@ -179,10 +183,10 @@ function GameLoop() {
 	context.fillStyle = layout.color;
 	context.fillRect(0, 0, layout.width, layout.height);
 	
-	context.fillStyle = "red";
+	context.fillStyle = apple.color;
 	context.fillRect(apple.x, apple.y, apple.size, apple.size);
 	
-	context.fillStyle = "black";
+	context.fillStyle = snake.color;
 	snake.body.forEach(element => {
 		context.fillRect(element.x, element.y, snake.size, snake.size);
 	});
