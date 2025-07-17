@@ -39,11 +39,11 @@ class Unit {
 
 class Apple extends Unit {
 	static count = 0;
-	size = 16;
+	size = 32;
 	color = "red";
 	
 	constructor(x, y) {
-		super(x, y, 16, 16);
+		super(x, y, 32, 32);
 		
 		this.count += 1;
 	}
@@ -122,79 +122,15 @@ function GameLoop() {
 	
 	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
-		// snake doesn't need to change direction
-		if (shift.y != 0) {
-			snake.body[0].y -= snake.body[0].height;
-		}
-		// snake needs to turn
-		else {
-			if (shift.x > 0) {
-				snake.body[0].x += snake.body[0].width - snake.body[0].height;
-				snake.body[0].y -= snake.body[0].width;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-			else {
-				snake.body[0].y -= snake.body[0].width;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-		}
+		snake.body[0].y -= snake.body[0].height;
 	}
 	
 	if (currentDirection == movement.down) {	
-		// snake doesn't need to change direction
-		if (shift.y != 0) {
-			snake.body[0].y += snake.body[0].height;
-		}
-		// snake needs to turn
-		else {
-			if (shift.x > 0) {
-				snake.body[0].x += snake.body[0].width - snake.body[0].height;
-				snake.body[0].y += snake.body[0].height;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-			else {
-				snake.body[0].y += snake.body[0].height;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-		}
+		snake.body[0].y += snake.body[0].height;
 	}
 	
 	if (currentDirection == movement.left) {
-		// snake doesn't need to change direction
-		if (shift.x != 0) {
-			snake.body[0].x -= snake.body[0].width;
-		}
-		// snake needs to turn
-		else {
-			if (shift.y > 0) {
-				snake.body[0].x -= snake.body[0].height;
-				snake.body[0].y += snake.body[0].height - snake.body[0].width;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-			
-			else {
-				snake.body[0].x -= snake.body[0].height;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-		}
+		snake.body[0].x -= snake.body[0].width;
 	}
 	
 	if (currentDirection == movement.right) {
@@ -205,16 +141,16 @@ function GameLoop() {
 	
 	// check if any part of snake's body passed through walls
 	for (let i = 0; i < snake.body.length; i++) {
-		if (snake.body[i].y <= -4) {
+		if (snake.body[i].y <= -snake.body[i].height) {
 			// if so, move it to the opposite side of game zone
 			// leaving the direction of movement
-			snake.body[i].y = layout.height - snake.body[i].y;
+			snake.body[i].y = layout.height + snake.body[i].y;
 		}
 		if (snake.body[i].y >= layout.height) {
 			snake.body[i].y = snake.body[i].y - layout.height;
 		}
-		if (snake.body[i].x <= -4) {
-			snake.body[i].x = layout.width - snake.body[i].x;
+		if (snake.body[i].x <= -snake.body[i].width) {
+			snake.body[i].x = layout.width + snake.body[i].x;
 		}
 		if (snake.body[i].x >= layout.width) {
 			snake.body[i].x = snake.body[i].x - layout.height;
