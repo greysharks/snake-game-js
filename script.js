@@ -199,28 +199,8 @@ function GameLoop() {
 	
 	if (currentDirection == movement.right) {
 		// snake doesn't need to change direction
-		if (shift.x != 0) {
-			snake.body[0].x += snake.body[0].width;
-		}
+		snake.body[0].x += snake.body[0].width;
 		// snake needs to turn
-		else {
-			if (shift.y > 0) {
-				snake.body[0].x += snake.body[0].width;
-				snake.body[0].y += snake.body[0].height - snake.body[0].width;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-			
-			else {
-				snake.body[0].x += snake.body[0].width;
-				
-				temp = snake.body[0].width;
-				snake.body[0].width = snake.body[0].height;
-				snake.body[0].height = temp;
-			}
-		}
 	}
 	
 	// check if any part of snake's body passed through walls
