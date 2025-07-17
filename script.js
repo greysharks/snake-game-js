@@ -39,11 +39,11 @@ class Unit {
 
 class Apple extends Unit {
 	static count = 0;
-	size = 32;
+	size = 16;
 	color = "red";
 	
 	constructor(x, y) {
-		super(x, y, 32, 32);
+		super(x, y, 16, 16);
 		
 		this.count += 1;
 	}
@@ -122,15 +122,79 @@ function GameLoop() {
 	
 	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
-		snake.body[0].y -= snake.body[0].height;
+		// snake doesn't need to change direction
+		if (shift.y != 0) {
+			snake.body[0].y -= snake.body[0].height;
+		}
+		// snake needs to turn
+		else {
+			if (shift.x > 0) {
+				snake.body[0].x += snake.body[0].width - snake.body[0].height;
+				snake.body[0].y -= snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			else {
+				snake.body[0].y -= snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
 	
 	if (currentDirection == movement.down) {	
-		snake.body[0].y += snake.body[0].height;
+		// snake doesn't need to change direction
+		if (shift.y != 0) {
+			snake.body[0].y += snake.body[0].height;
+		}
+		// snake needs to turn
+		else {
+			if (shift.x > 0) {
+				snake.body[0].x += snake.body[0].width - snake.body[0].height;
+				snake.body[0].y += snake.body[0].height;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			else {
+				snake.body[0].y += snake.body[0].height;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
 	
 	if (currentDirection == movement.left) {
-		snake.body[0].x -= snake.body[0].width;
+		// snake doesn't need to change direction
+		if (shift.x != 0) {
+			snake.body[0].x -= snake.body[0].width;
+		}
+		// snake needs to turn
+		else {
+			if (shift.y > 0) {
+				snake.body[0].x -= snake.body[0].height;
+				snake.body[0].y += snake.body[0].height - snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			
+			else {
+				snake.body[0].x -= snake.body[0].height;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
 	
 	if (currentDirection == movement.right) {
