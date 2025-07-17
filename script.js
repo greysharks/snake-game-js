@@ -26,10 +26,14 @@ class Movement {
 class Unit {
 	x = 0;
 	y = 0;
+	width = 4;
+	height = 16;
 	
-	constructor(x, y) {
+	constructor(x, y, width, height) {
 		this.x = x;
 		this.y = y;
+		this.width = width;
+		this.height = height;
 	}
 }
 
@@ -39,7 +43,7 @@ class Apple extends Unit {
 	color = "red";
 	
 	constructor(x, y) {
-		super(x, y);
+		super(x, y, 16, 16);
 		
 		this.count += 1;
 	}
@@ -49,19 +53,20 @@ class Apple extends Unit {
 class Snake {
 	last;
 	body = [];
-	size = 16;
-	speed = 4;
 	color = "black";
 	
-	constructor(x, y) {
-		this.last = new Unit(x, y);
-		this.body.push(this.last);
+	constructor(x, y, width, height) {
+		this.body.push(new Unit(x + 3*width, y, width, height));
+		this.body.push(new Unit(x + 2*width, y, width, height));
+		this.body.push(new Unit(x + width, y, width, height));
+		this.body.push(new Unit(x, y, width, height));
+		this.last = this.body.at(-1);
 		// console.log("snake was created");
 	}
 }
 
-function HaveCollided(a, b, sizeA, sizeB) {
-	return (a.x < b.x + sizeB) && (a.x + sizeA > b.x) && (a.y < b.y + sizeB) && (a.y + sizeA > b.y);
+function HaveCollided(a, b, widthA, heightA, widthB, heightB) {
+	return (a.x < b.x + widthB) && (a.x + widthA > b.x) && (a.y < b.y + heightB) && (a.y + heightA > b.y);
 }
 
 // adding event listeners for keyboard
@@ -84,64 +89,143 @@ const layout = new Layout(canvas.width, canvas.height);
 context.fillStyle = layout.color;
 context.fillRect(0, 0, layout.width, layout.height);
 
-const snake = new Snake(16, layout.height - 16); // 16 is the size of each part of the snake
+const snake = new Snake(0, layout.height - 16, 4, 16); // 16 is the size of each part of the snake
 context.fillStyle = snake.color;
-context.fillRect(snake.body[0].x, snake.body[0].y, snake.size, snake.size);
+snake.body.forEach(element => {
+	context.fillRect(element.x, element.y, element.width, element.height);
+});
 // console.log(snake.body[0].x, snake.body[0].y, snake.size);
-
-const snakeTemp = new Snake(0, snake.y);
-context.fillStyle = snake.color;
-context.fillRect(snakeTemp.body[0].x, snakeTemp.body[0].y, snakeTemp.size, snakeTemp.size);
 
 let apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
 context.fillStyle = apple.color;
 context.fillRect(apple.x, apple.y, apple.size, apple.size);
 
 // actual game loop (start of the game)
-const shift = new Unit(0, 0);
+const shift = new Unit(0, 0, 0, 0);
+let temp = 0;
 
-console.log(snake, snakeTemp);
+console.log(snake);
 
 function GameLoop() {
-	shift.x = 0;
-	shift.y = 0;
+	// move the rest of snake's body before moving the head
+	for (let i = snake.body.length - 1; i > 0; i--) {
+		snake.body[i].x = snake.body[i - 1].x;
+		snake.body[i].y = snake.body[i - 1].y;
+		snake.body[i].width = snake.body[i - 1].width;
+		snake.body[i].height = snake.body[i - 1].height;
+	}
+	
+	//move the snake's head
+	
+	shift.x = snake.body[0].x - snake.body[1].x;
+	shift.y = snake.body[0].y - snake.body[1].y;
 	
 	// check in which direction snake should move next
 	if (currentDirection == movement.up) {
-		// figure out what coordinate should be changed in snake's head
-		shift.y = -snake.speed;
+		// snake doesn't need to change direction
+		if (shift.y != 0) {
+			snake.body[0].y -= snake.body[0].height;
+		}
+		// snake needs to turn
+		else {
+			if (shift.x > 0) {
+				snake.body[0].x += snake.body[0].width - snake.body[0].height;
+				snake.body[0].y -= snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			else {
+				snake.body[0].y -= snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
 	
 	if (currentDirection == movement.down) {	
-		shift.y = snake.speed;
+		// snake doesn't need to change direction
+		if (shift.y != 0) {
+			snake.body[0].y += snake.body[0].height;
+		}
+		// snake needs to turn
+		else {
+			if (shift.x > 0) {
+				snake.body[0].x += snake.body[0].width - snake.body[0].height;
+				snake.body[0].y += snake.body[0].height;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			else {
+				snake.body[0].y += snake.body[0].height;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
 	
 	if (currentDirection == movement.left) {
-		shift.x = -snake.speed;
+		// snake doesn't need to change direction
+		if (shift.x != 0) {
+			snake.body[0].x -= snake.body[0].width;
+		}
+		// snake needs to turn
+		else {
+			if (shift.y > 0) {
+				snake.body[0].x -= snake.body[0].height;
+				snake.body[0].y += snake.body[0].height - snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			
+			else {
+				snake.body[0].x -= snake.body[0].height;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
 	
 	if (currentDirection == movement.right) {
-		shift.x = snake.speed;
+		// snake doesn't need to change direction
+		if (shift.x != 0) {
+			snake.body[0].x += snake.body[0].width;
+		}
+		// snake needs to turn
+		else {
+			if (shift.y > 0) {
+				snake.body[0].x += snake.body[0].width;
+				snake.body[0].y += snake.body[0].height - snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+			
+			else {
+				snake.body[0].x += snake.body[0].width;
+				
+				temp = snake.body[0].width;
+				snake.body[0].width = snake.body[0].height;
+				snake.body[0].height = temp;
+			}
+		}
 	}
-	
-	// move the rest of snake's body before moving the head
-	for (let i = 1; i < snake.body.length; i++) {
-		snake.body[i].x = snake.body[i - 1].x;
-		snake.body[i].y = snake.body[i - 1].y;
-		snakeTemp.body[i].x = snakeTemp.body[i - 1].x;
-		snakeTemp.body[i].y = snakeTemp.body[i - 1].y;
-	}
-	
-	// move the head of the snake
-	snakeTemp.body[0].x = snake.body[0].x;
-	snakeTemp.body[0].y = snake.body[0].y;
-	
-	snake.body[0].x += shift.x;
-	snake.body[0].y += shift.y;
 	
 	// check if any part of snake's body passed through walls
 	for (let i = 0; i < snake.body.length; i++) {
-		if (snake.body[i].y <= -1 * snake.size) {
+		if (snake.body[i].y <= -4) {
 			// if so, move it to the opposite side of game zone
 			// leaving the direction of movement
 			snake.body[i].y = layout.height - snake.body[i].y;
@@ -149,7 +233,7 @@ function GameLoop() {
 		if (snake.body[i].y >= layout.height) {
 			snake.body[i].y = snake.body[i].y - layout.height;
 		}
-		if (snake.body[i].x <= -1 * snake.size) {
+		if (snake.body[i].x <= -4) {
 			snake.body[i].x = layout.width - snake.body[i].x;
 		}
 		if (snake.body[i].x >= layout.width) {
@@ -158,20 +242,13 @@ function GameLoop() {
 	}
 	
 	// check for collisions after the snake has moved
-	if (HaveCollided(snake.body[0], apple, snake.size, apple.size)) {
+	if (HaveCollided(snake.body[0], apple, snake.body[0].width, snake.body[0].height, apple.size, apple.size)) {
 		// make the snake grow
-		snake.body.push(new Unit(snakeTemp.last.x, snakeTemp.last.y));
+		shift.x = snake.body.at(-1).x - snake.body.at(-2).x;
+		shift.y = snake.body.at(-1).y - snake.body.at(-2).y;
+		
+		snake.body.push(new Unit(snake.last.x + shift.x, snake.last.y + shift.y, snake.last.width, snake.last.height));
 		snake.last = snake.body.at(-1);
-		
-		// use again shift variable to find the difference
-		// between the snake's tail coordinates and coordinates of the one
-		// of the previous state of the snake 
-		// (to add new element in the same line to the end)
-		shift.x = snake.last.x - snakeTemp.last.x;
-		shift.y = snake.last.y - snakeTemp.last.y;
-		
-		snakeTemp.body.push(new Unit(snakeTemp.last.x + shift.x, snakeTemp.last.y + shift.y));
-		snakeTemp.last = snakeTemp.body.at(-1);
 			
 		//create new apple
 		apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.height - apple.size)));
@@ -179,8 +256,8 @@ function GameLoop() {
 	}
 		
 	for (let i = 1; i < snake.body.length; i++) {
-		if (HaveCollided(snake.body[0], snake.body[i], snake.size, snake.size)) {
-			console.log(snake, snakeTemp);
+		if (HaveCollided(snake.body[0], snake.body[i], snake.body[0].width, snake.body[0].height, snake.body[i].width, snake.body[i].height)) {
+			console.log(snake);
 			// display here a message about results of the game
 				
 			return; // game over
@@ -196,7 +273,7 @@ function GameLoop() {
 	
 	context.fillStyle = snake.color;
 	snake.body.forEach(element => {
-		context.fillRect(element.x, element.y, snake.size, snake.size);
+		context.fillRect(element.x, element.y, element.width, element.height);
 	});
 	
 	requestAnimationFrame(GameLoop);
