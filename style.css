@@ -17,3 +17,17 @@ canvas {
 	border-width: 2px;
 	border-color: black;
 }
+
+.text-info {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+
+#score {
+	width: 40%;
+	text-align: right;
+}

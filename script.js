@@ -38,7 +38,6 @@ class Unit {
 }
 
 class Apple extends Unit {
-	static count = 0;
 	size = 32;
 	color = "red";
 	
@@ -81,6 +80,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 // setting up layout for game to play
+const score = document.getElementById("score");
+let appleCount = 0;
 
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
@@ -176,7 +177,10 @@ function GameLoop() {
 			
 		//create new apple
 		apple = new Apple(Math.floor(Math.random() * (layout.width - apple.size)), Math.floor(Math.random() * (layout.height - apple.size)));
-		// console.log(snake.body);
+		appleCount += 1;
+		
+		score.textContent = "score: " + appleCount.toString();
+		// console.log(appleCount);
 	}
 		
 	for (let i = 1; i < snake.body.length; i++) {
