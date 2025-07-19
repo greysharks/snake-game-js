@@ -68,8 +68,14 @@ function HaveCollided(a, b, widthA, heightA, widthB, heightB) {
 	return (a.x < b.x + widthB) && (a.x + widthA > b.x) && (a.y < b.y + heightB) && (a.y + heightA > b.y);
 }
 
-// adding event listeners for game modes
-document.getElementById("classic-mode").addEventListener("click", (event) => {
+function ResetScene() {
+	classicMode.style.display = "none";
+	crazyMode.style.display = "none";
+	verticalMode.style.display = "none";
+	
+	context.fillStyle = layout.color;
+	context.fillRect(0, 0, layout.width, layout.height);
+
 	snake = new Snake(0, layout.height - 16, 4, 16); // 16 is the size of each part of the snake
 	context.fillStyle = snake.color;
 	snake.body.forEach(element => {
@@ -81,38 +87,32 @@ document.getElementById("classic-mode").addEventListener("click", (event) => {
 	context.fillRect(apple.x, apple.y, apple.size, apple.size);
 
 	appleCount = 0;
+	
+	currentDirection = movement.right;
+}
+
+// adding event listeners for game modes
+const classicMode = document.getElementById("classic-mode");
+const crazyMode = document.getElementById("crazy-mode");
+const verticalMode = document.getElementById("vertical-mode");
+
+// console.log(classicMode);
+
+
+classicMode.addEventListener("click", (event) => {
+	ResetScene();
 
 	requestAnimationFrame(ClassicSnake);
 });
 
-document.getElementById("crazy-mode").addEventListener("click", (event) => {
-	snake = new Snake(0, layout.height - 16, 4, 16); // 16 is the size of each part of the snake
-	context.fillStyle = snake.color;
-	snake.body.forEach(element => {
-		context.fillRect(element.x, element.y, element.width, element.height);
-	});
-
-	apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
-	context.fillStyle = apple.color;
-	context.fillRect(apple.x, apple.y, apple.size, apple.size);
-
-	appleCount = 0;
+crazyMode.addEventListener("click", (event) => {
+	ResetScene();
 
 	requestAnimationFrame(CrazySnake);
 });
 
-document.getElementById("vertical-mode").addEventListener("click", (event) => {
-	snake = new Snake(0, layout.height - 16, 4, 16); // 16 is the size of each part of the snake
-	context.fillStyle = snake.color;
-	snake.body.forEach(element => {
-		context.fillRect(element.x, element.y, element.width, element.height);
-	});
-
-	apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
-	context.fillStyle = apple.color;
-	context.fillRect(apple.x, apple.y, apple.size, apple.size);
-
-	appleCount = 0;
+verticalMode.addEventListener("click", (event) => {
+	ResetScene();
 
 	requestAnimationFrame(VerticalSnake);
 });
@@ -227,6 +227,10 @@ function ClassicSnake() {
 		if (HaveCollided(snake.body[0], snake.body[i], snake.body[0].width, snake.body[0].height, snake.body[i].width, snake.body[i].height)) {
 			console.log(snake);
 			// display here a message about results of the game
+				
+			classicMode.style.display = "inline";
+			crazyMode.style.display = "inline";
+			verticalMode.style.display = "inline";
 				
 			return; // game over
 		}
@@ -381,6 +385,10 @@ function CrazySnake() {
 			console.log(snake);
 			// display here a message about results of the game
 				
+			classicMode.style.display = "inline";
+			crazyMode.style.display = "inline";
+			verticalMode.style.display = "inline";
+			
 			return; // game over
 		}
 	}
@@ -470,6 +478,10 @@ function VerticalSnake() {
 			console.log(snake);
 			// display here a message about results of the game
 				
+			classicMode.style.display = "inline";
+			crazyMode.style.display = "inline";
+			verticalMode.style.display = "inline";
+				
 			return; // game over
 		}
 	}
@@ -488,3 +500,8 @@ function VerticalSnake() {
 	
 	requestAnimationFrame(VerticalSnake);
 }
+
+// initial game start
+ResetScene();
+
+requestAnimationFrame(ClassicSnake);
