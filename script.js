@@ -68,6 +68,30 @@ function HaveCollided(a, b, widthA, heightA, widthB, heightB) {
 	return (a.x < b.x + widthB) && (a.x + widthA > b.x) && (a.y < b.y + heightB) && (a.y + heightA > b.y);
 }
 
+// adding event listeners for game modes
+document.getElementById("classic-mode").addEventListener("click", (event) => {
+	snake = new Snake(0, layout.height - 16, 4, 16); // 16 is the size of each part of the snake
+	context.fillStyle = snake.color;
+	snake.body.forEach(element => {
+		context.fillRect(element.x, element.y, element.width, element.height);
+	});
+
+	apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
+	context.fillStyle = apple.color;
+	context.fillRect(apple.x, apple.y, apple.size, apple.size);
+
+	appleCount = 0;
+
+	requestAnimationFrame(ClassicSnake);
+});
+const crazyMode = document.getElementById("crazy-mode").addEventListener("click", (event) => {
+	
+});
+const verticalMode = document.getElementById("vertical-mode").addEventListener("click", (event) => {
+	
+});
+
+
 // adding event listeners for keyboard
 
 const movement = new Movement();
@@ -90,24 +114,16 @@ const layout = new Layout(canvas.width, canvas.height);
 context.fillStyle = layout.color;
 context.fillRect(0, 0, layout.width, layout.height);
 
-const snake = new Snake(0, layout.height - 16, 4, 16); // 16 is the size of each part of the snake
-context.fillStyle = snake.color;
-snake.body.forEach(element => {
-	context.fillRect(element.x, element.y, element.width, element.height);
-});
-// console.log(snake.body[0].x, snake.body[0].y, snake.size);
-
-let apple = new Apple((layout.height - 16) / 2, (layout.height - 16) / 2); // center the first apple
-context.fillStyle = apple.color;
-context.fillRect(apple.x, apple.y, apple.size, apple.size);
+let snake;
+let apple;
 
 // actual game loop (start of the game)
 const shift = new Unit(0, 0, 0, 0);
 let temp = 0;
 
-console.log(snake);
+// console.log(snake);
 
-function GameLoop() {
+function ClassicSnake() {
 	// move the rest of snake's body before moving the head
 	for (let i = snake.body.length - 1; i > 0; i--) {
 		snake.body[i].x = snake.body[i - 1].x;
@@ -204,7 +220,5 @@ function GameLoop() {
 		context.fillRect(element.x, element.y, element.width, element.height);
 	});
 	
-	requestAnimationFrame(GameLoop);
+	requestAnimationFrame(ClassicSnake);
 }
-
-requestAnimationFrame(GameLoop);
